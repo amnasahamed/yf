@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Analyzer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background-color: #f0f2f5;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+        }
+        
+        .table {
+            font-size: 0.9rem;
+        }
+        
+        .table th {
+            cursor: pointer;
+            position: relative;
+            background-color: #f8f9fa;
+        }
+        
+        .table th::after {
+            content: '\F138';
+            font-family: 'bootstrap-icons';
+            opacity: 0.3;
+            margin-left: 5px;
+        }
+        
+        .table th.sort-asc::after {
+            content: '\F129';
+            opacity: 1;
+        }
+        
+        .table th.sort-desc::after {
+            content: '\F12C';
+            opacity: 1;
+        }
+        
+        .table td, .table th {
+            vertical-align: middle;
+        }
+        
+        .overbought {
+            background-color: #ffdddd !important;
+            color: #dc3545 !important;
+        }
+        
+        .oversold {
+            background-color: #ddffdd !important;
+            color: #198754 !important;
+        }
+        
+        .neutral {
+            background-color: #f8f9fa !important;
+        }
+        
+        .bullish {
+            background-color: #d4edda !important;
+            color: #155724 !important;
+        }
+        
+        .bearish {
+            background-color: #f8d7da !important;
+            color: #721c24 !important;
+        }
+        
+        .above {
+            background-color: #e8f5e9 !important;
+            color: #155724 !important;
+        }
+        
+        .below {
+            background-color: #fff3cd !important;
+            color: #856404 !important;
+        }
+        
+        .error-row {
+            background-color: #ffe6e6 !important;
+        }
+        
+        .refresh-icon {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .status-bar {
+            background-color: #e9ecef;
+            border-radius: 4px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .symbol-cell {
+            font-weight: bold;
+        }
+        
+        .toggle-button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1>Stock Analyzer <small class="text-muted">RSI & MACD</small></h1>
+            </div>
+            <div class="col-md-4 text-end">
+                <button id="refreshBtn" class="btn btn-primary">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh Data
+                </button>
+                <div class="form-check form-switch d-inline-block ms-3">
+                    <input class="form-check-input" type="checkbox" id="autoRefreshToggle" checked>
+                    <label class="form-check-label" for="autoRefreshToggle">Auto Refresh</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-bar d-flex justify-content-between align-items-center">
+            <div id="statusMessage">Loading data...</div>
+            <div id="lastUpdated">Last Updated: -</div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Stock Data</span>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-secondary toggle-button" data-view="all" id="viewAllBtn">All</button>
+                    <button class="btn btn-outline-secondary toggle-button" data-view="overbought">Overbought</button>
+                    <button class="btn btn-outline-secondary toggle-button" data-view="oversold">Oversold</button>
+                    <button class="btn btn-outline-secondary toggle-button" data-view="bullish">Bullish</button>
+                    <button class="btn btn-outline-secondary toggle-button" data-view="bearish">Bearish</button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th data-sort="symbol">Symbol</th>
+                                <th data-sort="price">Price</th>
+                                <th data-sort="rsi">RSI</th>
+                                <th>RSI Signal</th>
+                                <th data-sort="macd">MACD</th>
+                                <th data-sort="macd_signal">Signal</th>
+                                <th data-sort="macd_hist">Histogram</th>
+                                <th>Crossover</th>
+                                <th data-sort="volume">Volume</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stocksTableBody">
+                            <tr>
+                                <td colspan="9" class="text-center">Loading stock data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">RSI Indicator</div>
+                    <div class="card-body">
+                        <p><strong>Relative Strength Index (RSI)</strong> is a momentum oscillator that measures the speed and change of price movements.</p>
+                        <ul>
+                            <li><span class="badge bg-danger">Overbought (70+)</span>: Stock may be overvalued and due for a pullback</li>
+                            <li><span class="badge bg-success">Oversold (30-)</span>: Stock may be undervalued and due for a bounce</li>
+                            <li><span class="badge bg-secondary">Neutral (30-70)</span>: Neither overbought nor oversold</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">MACD Indicator</div>
+                    <div class="card-body">
+                        <p><strong>Moving Average Convergence Divergence (MACD)</strong> is a trend-following momentum indicator.</p>
+                        <ul>
+                            <li><span class="badge bg-success">Bullish Crossover</span>: MACD line crosses above the signal line</li>
+                            <li><span class="badge bg-danger">Bearish Crossover</span>: MACD line crosses below the signal line</li>
+                            <li><span class="badge bg-light text-dark">Histogram</span>: Difference between MACD and signal line</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // DOM elements
+        const stocksTableBody = document.getElementById('stocksTableBody');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const autoRefreshToggle = document.getElementById('autoRefreshToggle');
+        const statusMessage = document.getElementById('statusMessage');
+        const lastUpdated = document.getElementById('lastUpdated');
+        const tableHeaders = document.querySelectorAll('th[data-sort]');
+        const viewButtons = document.querySelectorAll('.toggle-button');
+        
+        // State variables
+        let currentSort = 'symbol';
+        let currentSortOrder = 'asc';
+        let refreshInterval = null;
+        let currentView = 'all';
+        
+        // Constants
+        const REFRESH_INTERVAL = 30000; // 30 seconds
+        
+        // Event listeners
+        refreshBtn.addEventListener('click', fetchStockData);
+        autoRefreshToggle.addEventListener('change', toggleAutoRefresh);
+        
+        tableHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const sortBy = header.getAttribute('data-sort');
+                if (sortBy === currentSort) {
+                    // Toggle sort order
+                    currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+                } else {
+                    // New sort column
+                    currentSort = sortBy;
+                    currentSortOrder = 'asc';
+                }
+                
+                // Update UI
+                updateSortIndicators();
+                fetchStockData();
+            });
+        });
+        
+        viewButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                currentView = button.getAttribute('data-view');
+                updateViewButtons();
+                filterTableRows();
+            });
+        });
+        
+        // Initialize
+        updateSortIndicators();
+        updateViewButtons();
+        fetchStockData();
+        startAutoRefresh();
+        
+        // Functions
+        function updateSortIndicators() {
+            tableHeaders.forEach(header => {
+                header.classList.remove('sort-asc', 'sort-desc');
+                const sortBy = header.getAttribute('data-sort');
+                if (sortBy === currentSort) {
+                    header.classList.add(currentSortOrder === 'asc' ? 'sort-asc' : 'sort-desc');
+                }
+            });
+        }
+        
+        function updateViewButtons() {
+            viewButtons.forEach(button => {
+                button.classList.remove('btn-secondary');
+                button.classList.add('btn-outline-secondary');
+                
+                if (button.getAttribute('data-view') === currentView) {
+                    button.classList.remove('btn-outline-secondary');
+                    button.classList.add('btn-secondary');
+                }
+            });
+        }
+        
+        function startAutoRefresh() {
+            stopAutoRefresh();
+            if (autoRefreshToggle.checked) {
+                refreshInterval = setInterval(fetchStockData, REFRESH_INTERVAL);
+            }
+        }
+        
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+        }
+        
+        function toggleAutoRefresh() {
+            if (autoRefreshToggle.checked) {
+                statusMessage.textContent = 'Auto-refresh enabled';
+                startAutoRefresh();
+            } else {
+                statusMessage.textContent = 'Auto-refresh disabled';
+                stopAutoRefresh();
+            }
+        }
+        
+        function fetchStockData() {
+            showRefreshIndicator(true);
+            statusMessage.textContent = 'Fetching data...';
+            
+            fetch(`/api/stocks?sort_by=${currentSort}&sort_order=${currentSortOrder}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderStockTable(data.stocks);
+                    lastUpdated.textContent = `Last Updated: ${new Date().toLocaleTimeString()}`;
+                    statusMessage.textContent = `Loaded ${data.stocks.length} stocks successfully`;
+                    showRefreshIndicator(false);
+                })
+                .catch(error => {
+                    console.error('Error fetching stock data:', error);
+                    statusMessage.textContent = `Error: ${error.message}`;
+                    showRefreshIndicator(false);
+                });
+        }
+        
+        function showRefreshIndicator(show) {
+            const icon = refreshBtn.querySelector('i');
+            if (show) {
+                refreshBtn.disabled = true;
+                icon.classList.add('refresh-icon');
+            } else {
+                setTimeout(() => {
+                    refreshBtn.disabled = false;
+                    icon.classList.remove('refresh-icon');
+                }, 500);
+            }
+        }
+        
+        function renderStockTable(stocks) {
+            if (!stocks || stocks.length === 0) {
+                stocksTableBody.innerHTML = '<tr><td colspan="9" class="text-center">No stock data available</td></tr>';
+                return;
+            }
+            
+            stocksTableBody.innerHTML = '';
+            
+            stocks.forEach(stock => {
+                const row = document.createElement('tr');
+                
+                // Add data-attributes for filtering
+                row.setAttribute('data-symbol', stock.symbol);
+                row.setAttribute('data-rsi-signal', stock.rsi_signal.toLowerCase());
+                
+                if (stock.macd_crossover.includes('Bullish')) {
+                    row.setAttribute('data-macd-signal', 'bullish');
+                } else if (stock.macd_crossover.includes('Bearish')) {
+                    row.setAttribute('data-macd-signal', 'bearish');
+                } else if (stock.macd_crossover.includes('Above')) {
+                    row.setAttribute('data-macd-signal', 'above');
+                } else if (stock.macd_crossover.includes('Below')) {
+                    row.setAttribute('data-macd-signal', 'below');
+                }
+                
+                // Error handling
+                if (stock.error) {
+                    row.classList.add('error-row');
+                    row.innerHTML = `
+                        <td class="symbol-cell">${stock.symbol}</td>
+                        <td colspan="8" class="text-danger">Error: ${stock.error}</td>
+                    `;
+                } else {
+                    // Format RSI cell class
+                    let rsiClass = 'neutral';
+                    if (stock.rsi >= 70) {
+                        rsiClass = 'overbought';
+                    } else if (stock.rsi <= 30) {
+                        rsiClass = 'oversold';
+                    }
+                    
+                    // Format MACD crossover class
+                    let crossoverClass = '';
+                    if (stock.macd_crossover.includes('Bullish')) {
+                        crossoverClass = 'bullish';
+                    } else if (stock.macd_crossover.includes('Bearish')) {
+                        crossoverClass = 'bearish';
+                    } else if (stock.macd_crossover.includes('Above')) {
+                        crossoverClass = 'above';
+                    } else if (stock.macd_crossover.includes('Below')) {
+                        crossoverClass = 'below';
+                    }
+                    
+                    // Format MACD histogram class
+                    let histClass = stock.macd_hist > 0 ? 'bullish' : 'bearish';
+                    
+                    row.innerHTML = `
+                        <td class="symbol-cell">${stock.symbol.replace('.NS', '')}</td>
+                        <td>₹${stock.price.toFixed(2)}</td>
+                        <td class="${rsiClass}">${stock.rsi.toFixed(2)}</td>
+                        <td class="${rsiClass}">${stock.rsi_signal}</td>
+                        <td>${stock.macd.toFixed(4)}</td>
+                        <td>${stock.macd_signal.toFixed(4)}</td>
+                        <td class="${histClass}">${stock.macd_hist.toFixed(4)}</td>
+                        <td class="${crossoverClass}">${stock.macd_crossover}</td>
+                        <td>${stock.volume.toLocaleString()}</td>
+                    `;
+                }
+                
+                stocksTableBody.appendChild(row);
+            });
+            
+            filterTableRows();
+        }
+        
+        function filterTableRows() {
+            const rows = stocksTableBody.querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                if (currentView === 'all') {
+                    row.style.display = '';
+                    return;
+                }
+                
+                const rsiSignal = row.getAttribute('data-rsi-signal');
+                const macdSignal = row.getAttribute('data-macd-signal');
+                
+                switch (currentView) {
+                    case 'overbought':
+                        row.style.display = rsiSignal === 'overbought' ? '' : 'none';
+                        break;
+                    case 'oversold':
+                        row.style.display = rsiSignal === 'oversold' ? '' : 'none';
+                        break;
+                    case 'bullish':
+                        row.style.display = macdSignal === 'bullish' ? '' : 'none';
+                        break;
+                    case 'bearish':
+                        row.style.display = macdSignal === 'bearish' ? '' : 'none';
+                        break;
+                }
+            });
+            
+            // Check if any rows are visible
+            let anyVisible = false;
+            rows.forEach(row => {
+                if (row.style.display !== 'none') {
+                    anyVisible = true;
+                }
+            });
+            
+            // Show message if no rows match filter
+            if (!anyVisible && rows.length > 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = `<td colspan="9" class="text-center">No ${currentView} stocks found</td>`;
+                stocksTableBody.appendChild(emptyRow);
+            }
+        }
+    </script>
+</body>
+</html>

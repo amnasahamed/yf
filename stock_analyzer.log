@@ -1,0 +1,1658 @@
+2025-05-24 17:02:08,889 - __main__ - INFO - StockDatabase initialized
+2025-05-24 17:02:09,087 - __main__ - INFO - StockDashboard initialized
+2025-05-24 17:05:43,552 - __main__ - INFO - StockDatabase initialized
+2025-05-24 17:05:43,673 - __main__ - INFO - StockDashboard initialized
+2025-05-24 17:11:05,559 - __main__ - INFO - Successfully connected to database (attempt 1)
+2025-05-24 17:11:05,560 - __main__ - INFO - StockDatabase initialized
+2025-05-24 17:11:05,677 - __main__ - INFO - StockDashboard initialized
+2025-05-24 17:11:06,367 - __main__ - ERROR - Unexpected error executing query: relation "stock_data" does not exist
+LINE 16:                     FROM stock_data sd
+                                  ^
+
+Query: 
+                WITH latest_data AS (
+                    SELECT 
+                        sd.stock,
+                        sd.open,
+                        sd.high,
+                        sd.low,
+                        sd.close,
+                        sd.volume,
+                        sd.timestamp,
+                        sm.rsi,
+                        sm.macd,
+                        sm.macd_signal,
+                        COALESCE(sm.macd - sm.macd_signal, 0) as macd_hist,
+                        ROW_NUMBER() OVER (PARTITION BY sd.stock ORDER BY sd.timestamp DESC) as rn
+                    FROM stock_data sd
+                    LEFT JOIN stock_metrics sm ON 
+                        sd.stock = sm.stock 
+                        AND DATE(sm.timestamp) = CURRENT_DATE
+                    WHERE DATE(sd.timestamp) = CURRENT_DATE
+                )
+                SELECT 
+                    stock, open, high, low, close, volume, timestamp,
+                    rsi, macd, macd_signal, macd_hist
+                FROM latest_data
+                WHERE rn = 1
+                ORDER BY timestamp DESC
+                LIMIT 1000  -- Safety limit
+            
+2025-05-24 17:11:06,368 - __main__ - ERROR - Query execution failed: relation "stock_data" does not exist
+LINE 16:                     FROM stock_data sd
+                                  ^
+
+2025-05-24 17:11:06,368 - __main__ - INFO - Fetched 0 stocks in 0.19s
+2025-05-24 17:11:17,552 - __main__ - ERROR - Unexpected error executing query: relation "stock_data" does not exist
+LINE 16:                     FROM stock_data sd
+                                  ^
+
+Query: 
+                WITH latest_data AS (
+                    SELECT 
+                        sd.stock,
+                        sd.open,
+                        sd.high,
+                        sd.low,
+                        sd.close,
+                        sd.volume,
+                        sd.timestamp,
+                        sm.rsi,
+                        sm.macd,
+                        sm.macd_signal,
+                        COALESCE(sm.macd - sm.macd_signal, 0) as macd_hist,
+                        ROW_NUMBER() OVER (PARTITION BY sd.stock ORDER BY sd.timestamp DESC) as rn
+                    FROM stock_data sd
+                    LEFT JOIN stock_metrics sm ON 
+                        sd.stock = sm.stock 
+                        AND DATE(sm.timestamp) = CURRENT_DATE
+                    WHERE DATE(sd.timestamp) = CURRENT_DATE
+                )
+                SELECT 
+                    stock, open, high, low, close, volume, timestamp,
+                    rsi, macd, macd_signal, macd_hist
+                FROM latest_data
+                WHERE rn = 1
+                ORDER BY timestamp DESC
+                LIMIT 1000  -- Safety limit
+            
+2025-05-24 17:11:17,553 - __main__ - ERROR - Query execution failed: relation "stock_data" does not exist
+LINE 16:                     FROM stock_data sd
+                                  ^
+
+2025-05-24 17:11:17,553 - __main__ - INFO - Fetched 0 stocks in 0.20s
+2025-05-24 17:11:50,655 - __main__ - INFO - Database connection closed
+2025-05-24 17:13:38,311 - __main__ - INFO - Successfully connected to database (attempt 1)
+2025-05-24 17:13:38,312 - __main__ - INFO - StockDatabase initialized
+2025-05-24 17:13:38,427 - __main__ - INFO - StockDashboard initialized
+2025-05-24 17:13:39,126 - __main__ - ERROR - Unexpected error executing query: column "open" does not exist
+LINE 4:                     open,
+                            ^
+
+Query: 
+                SELECT 
+                    stock,
+                    open,
+                    high,
+                    low,
+                    close,
+                    volume,
+                    timestamp,
+                    rsi,
+                    macd,
+                    macd_signal,
+                    COALESCE(macd - macd_signal, 0) as macd_hist
+                FROM public.pelago
+                WHERE DATE(timestamp) = CURRENT_DATE
+                ORDER BY timestamp DESC
+                LIMIT 1000  -- Safety limit
+            
+2025-05-24 17:13:39,127 - __main__ - ERROR - Query execution failed: column "open" does not exist
+LINE 4:                     open,
+                            ^
+
+2025-05-24 17:13:39,127 - __main__ - INFO - Fetched 0 stocks in 0.19s
+2025-05-24 17:13:42,155 - __main__ - ERROR - Unexpected error executing query: column "open" does not exist
+LINE 4:                     open,
+                            ^
+
+Query: 
+                SELECT 
+                    stock,
+                    open,
+                    high,
+                    low,
+                    close,
+                    volume,
+                    timestamp,
+                    rsi,
+                    macd,
+                    macd_signal,
+                    COALESCE(macd - macd_signal, 0) as macd_hist
+                FROM public.pelago
+                WHERE DATE(timestamp) = CURRENT_DATE
+                ORDER BY timestamp DESC
+                LIMIT 1000  -- Safety limit
+            
+2025-05-24 17:13:42,155 - __main__ - ERROR - Query execution failed: column "open" does not exist
+LINE 4:                     open,
+                            ^
+
+2025-05-24 17:13:42,156 - __main__ - INFO - Fetched 0 stocks in 0.23s
+2025-05-24 17:13:45,341 - __main__ - INFO - Database connection closed
+2025-05-24 17:18:14,174 - __main__ - INFO - Successfully connected to database (attempt 1)
+2025-05-24 17:18:14,175 - __main__ - INFO - StockDatabase initialized
+2025-05-24 17:18:14,275 - __main__ - INFO - StockDashboard initialized
+2025-05-24 17:18:14,994 - __main__ - ERROR - Unexpected error executing query: column "open" does not exist
+LINE 4:                     open,
+                            ^
+
+Query: 
+                SELECT 
+                    stock,
+                    open,
+                    high,
+                    low,
+                    close,
+                    volume,
+                    timestamp,
+                    rsi,
+                    macd,
+                    macd_signal,
+                    COALESCE(macd - macd_signal, 0) as macd_hist
+                FROM public.pelago
+                WHERE DATE(timestamp) = CURRENT_DATE
+                ORDER BY timestamp DESC
+                LIMIT 1000  -- Safety limit
+            
+Traceback (most recent call last):
+  File "/Users/amnasahamed/Documents/Personal/trading/yfinance/stock_analyzer.py", line 248, in _execute_query
+    cur.execute(query, params or ())
+psycopg2.errors.UndefinedColumn: column "open" does not exist
+LINE 4:                     open,
+                            ^
+
+2025-05-24 17:18:14,996 - __main__ - ERROR - Query execution failed after 3 attempts: column "open" does not exist
+LINE 4:                     open,
+                            ^
+
+2025-05-24 17:18:14,996 - __main__ - INFO - Fetched 0 stocks in 0.22s
+2025-05-24 17:18:44,200 - __main__ - ERROR - Unexpected error executing query: column "open" does not exist
+LINE 4:                     open,
+                            ^
+
+Query: 
+                SELECT 
+                    stock,
+                    open,
+                    high,
+                    low,
+                    close,
+                    volume,
+                    timestamp,
+                    rsi,
+                    macd,
+                    macd_signal,
+                    COALESCE(macd - macd_signal, 0) as macd_hist
+                FROM public.pelago
+                WHERE DATE(timestamp) = CURRENT_DATE
+                ORDER BY timestamp DESC
+                LIMIT 1000  -- Safety limit
+            
+Traceback (most recent call last):
+  File "/Users/amnasahamed/Documents/Personal/trading/yfinance/stock_analyzer.py", line 248, in _execute_query
+    cur.execute(query, params or ())
+psycopg2.errors.UndefinedColumn: column "open" does not exist
+LINE 4:                     open,
+                            ^
+
+2025-05-24 17:18:44,202 - __main__ - ERROR - Query execution failed after 3 attempts: column "open" does not exist
+LINE 4:                     open,
+                            ^
+
+2025-05-24 17:18:44,202 - __main__ - INFO - Fetched 0 stocks in 0.18s
+2025-05-24 17:19:09,546 - __main__ - INFO - Database connection closed
+2025-05-24 17:22:37,533 - __main__ - INFO - Successfully connected to database (attempt 1)
+2025-05-24 17:22:37,533 - __main__ - INFO - StockDatabase initialized
+2025-05-24 17:22:37,653 - __main__ - INFO - StockDashboard initialized
+2025-05-24 17:22:38,377 - __main__ - INFO - Fetched 6 stocks in 0.18s
+2025-05-24 17:22:56,735 - __main__ - INFO - Database connection closed
+2025-05-24 17:25:09,035 - __main__ - INFO - Successfully connected to database (attempt 1)
+2025-05-24 17:25:09,036 - __main__ - INFO - StockDatabase initialized
+2025-05-24 17:25:09,151 - __main__ - INFO - StockDashboard initialized
+2025-05-24 17:25:09,858 - __main__ - INFO - Fetched 6 stocks in 0.19s
+2025-05-24 17:25:10,042 - __main__ - ERROR - Unexpected error executing query: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+Query: 
+                SELECT date, open, high, low, close, volume
+                FROM public.pelago
+                WHERE stock = %s
+                ORDER BY date DESC
+                LIMIT %s
+            
+Traceback (most recent call last):
+  File "/Users/amnasahamed/Documents/Personal/trading/yfinance/stock_analyzer.py", line 248, in _execute_query
+    cur.execute(query, params or ())
+psycopg2.errors.UndefinedColumn: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+2025-05-24 17:25:10,042 - __main__ - ERROR - Query execution failed after 3 attempts: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+2025-05-24 17:25:10,248 - __main__ - ERROR - Unexpected error executing query: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+Query: 
+                SELECT date, open, high, low, close, volume
+                FROM public.pelago
+                WHERE stock = %s
+                ORDER BY date DESC
+                LIMIT %s
+            
+Traceback (most recent call last):
+  File "/Users/amnasahamed/Documents/Personal/trading/yfinance/stock_analyzer.py", line 248, in _execute_query
+    cur.execute(query, params or ())
+psycopg2.errors.UndefinedColumn: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+2025-05-24 17:25:10,248 - __main__ - ERROR - Query execution failed after 3 attempts: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+2025-05-24 17:25:10,461 - __main__ - ERROR - Unexpected error executing query: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+Query: 
+                SELECT date, open, high, low, close, volume
+                FROM public.pelago
+                WHERE stock = %s
+                ORDER BY date DESC
+                LIMIT %s
+            
+Traceback (most recent call last):
+  File "/Users/amnasahamed/Documents/Personal/trading/yfinance/stock_analyzer.py", line 248, in _execute_query
+    cur.execute(query, params or ())
+psycopg2.errors.UndefinedColumn: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+2025-05-24 17:25:10,461 - __main__ - ERROR - Query execution failed after 3 attempts: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+2025-05-24 17:25:10,635 - __main__ - ERROR - Unexpected error executing query: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+Query: 
+                SELECT date, open, high, low, close, volume
+                FROM public.pelago
+                WHERE stock = %s
+                ORDER BY date DESC
+                LIMIT %s
+            
+Traceback (most recent call last):
+  File "/Users/amnasahamed/Documents/Personal/trading/yfinance/stock_analyzer.py", line 248, in _execute_query
+    cur.execute(query, params or ())
+psycopg2.errors.UndefinedColumn: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+2025-05-24 17:25:10,635 - __main__ - ERROR - Query execution failed after 3 attempts: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+2025-05-24 17:25:10,824 - __main__ - ERROR - Unexpected error executing query: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+Query: 
+                SELECT date, open, high, low, close, volume
+                FROM public.pelago
+                WHERE stock = %s
+                ORDER BY date DESC
+                LIMIT %s
+            
+Traceback (most recent call last):
+  File "/Users/amnasahamed/Documents/Personal/trading/yfinance/stock_analyzer.py", line 248, in _execute_query
+    cur.execute(query, params or ())
+psycopg2.errors.UndefinedColumn: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+2025-05-24 17:25:10,824 - __main__ - ERROR - Query execution failed after 3 attempts: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+2025-05-24 17:25:11,000 - __main__ - ERROR - Unexpected error executing query: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+Query: 
+                SELECT date, open, high, low, close, volume
+                FROM public.pelago
+                WHERE stock = %s
+                ORDER BY date DESC
+                LIMIT %s
+            
+Traceback (most recent call last):
+  File "/Users/amnasahamed/Documents/Personal/trading/yfinance/stock_analyzer.py", line 248, in _execute_query
+    cur.execute(query, params or ())
+psycopg2.errors.UndefinedColumn: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+2025-05-24 17:25:11,001 - __main__ - ERROR - Query execution failed after 3 attempts: column "open" does not exist
+LINE 2:                 SELECT date, open, high, low, close, volume
+                                     ^
+
+2025-05-24 17:42:03,325 - __main__ - INFO - Successfully connected to database (attempt 1)
+2025-05-24 17:42:03,326 - __main__ - INFO - StockDatabase initialized
+2025-05-24 17:42:03,422 - __main__ - INFO - StockDashboard initialized
+2025-05-24 17:42:04,163 - __main__ - INFO - Fetched 6 stocks in 0.22s
+2025-05-24 17:42:04,354 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp, open, high, low, close, volume...
+                           ^
+
+2025-05-24 17:42:04,544 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp, open, high, low, close, volume...
+                           ^
+
+2025-05-24 17:42:04,730 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp, open, high, low, close, volume...
+                           ^
+
+2025-05-24 17:42:04,824 - yfinance - ERROR - HARSHA.NS: Period '1h' is invalid, must be of the format 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, ytd, max, etc.
+2025-05-24 17:42:04,825 - __main__ - ERROR - Failed to fetch HARSHA from yfinance: No data received from yfinance
+2025-05-24 17:42:04,826 - __main__ - ERROR - Error processing HARSHA: Failed to fetch HARSHA from yfinance: No data received from yfinance
+2025-05-24 17:42:04,858 - yfinance - ERROR - CLEAN.NS: Period '1h' is invalid, must be of the format 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, ytd, max, etc.
+2025-05-24 17:42:04,858 - __main__ - ERROR - Failed to fetch CLEAN from yfinance: No data received from yfinance
+2025-05-24 17:42:04,858 - __main__ - ERROR - Error processing CLEAN: Failed to fetch CLEAN from yfinance: No data received from yfinance
+2025-05-24 17:42:04,919 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp, open, high, low, close, volume...
+                           ^
+
+2025-05-24 17:42:04,950 - yfinance - ERROR - GENUSPOWER.NS: Period '1h' is invalid, must be of the format 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max, etc.
+2025-05-24 17:42:04,951 - __main__ - ERROR - Failed to fetch GENUSPOWER from yfinance: No data received from yfinance
+2025-05-24 17:42:04,951 - __main__ - ERROR - Error processing GENUSPOWER: Failed to fetch GENUSPOWER from yfinance: No data received from yfinance
+2025-05-24 17:42:05,106 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp, open, high, low, close, volume...
+                           ^
+
+2025-05-24 17:42:05,174 - yfinance - ERROR - INFY.NS: Period '1h' is invalid, must be of the format 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max, etc.
+2025-05-24 17:42:05,175 - __main__ - ERROR - Failed to fetch INFY from yfinance: No data received from yfinance
+2025-05-24 17:42:05,175 - __main__ - ERROR - Error processing INFY: Failed to fetch INFY from yfinance: No data received from yfinance
+2025-05-24 17:42:05,295 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp, open, high, low, close, volume...
+                           ^
+
+2025-05-24 17:42:05,376 - yfinance - ERROR - RELIANCE.NS: Period '1h' is invalid, must be of the format 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max, etc.
+2025-05-24 17:42:05,377 - __main__ - ERROR - Failed to fetch RELIANCE from yfinance: No data received from yfinance
+2025-05-24 17:42:05,377 - __main__ - ERROR - Error processing RELIANCE: Failed to fetch RELIANCE from yfinance: No data received from yfinance
+2025-05-24 17:42:05,540 - yfinance - ERROR - SBIN.NS: Period '1h' is invalid, must be of the format 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max, etc.
+2025-05-24 17:42:05,541 - __main__ - ERROR - Failed to fetch SBIN from yfinance: No data received from yfinance
+2025-05-24 17:42:05,541 - __main__ - ERROR - Error processing SBIN: Failed to fetch SBIN from yfinance: No data received from yfinance
+2025-05-24 17:51:05,845 - __main__ - INFO - Successfully connected to database (attempt 1)
+2025-05-24 17:51:05,846 - __main__ - INFO - StockDatabase initialized
+2025-05-24 17:51:05,967 - __main__ - INFO - StockDashboard initialized
+2025-05-24 17:51:06,668 - __main__ - INFO - Fetched 6 stocks in 0.21s
+2025-05-24 17:51:06,859 - __main__ - ERROR - Error fetching history for CLEAN: column "open" does not exist
+LINE 2:             SELECT date, open, high, low, close, volume 
+                                 ^
+
+2025-05-24 17:51:07,050 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "open" does not exist
+LINE 2:             SELECT date, open, high, low, close, volume 
+                                 ^
+
+2025-05-24 17:51:07,241 - __main__ - ERROR - Error fetching history for HARSHA: column "open" does not exist
+LINE 2:             SELECT date, open, high, low, close, volume 
+                                 ^
+
+2025-05-24 17:51:07,385 - yfinance - ERROR - GENUSPOWER.NS: Period '1h' is invalid, must be of the format 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max, etc.
+2025-05-24 17:51:07,386 - __main__ - ERROR - Failed to fetch GENUSPOWER from yfinance: No data received from yfinance
+2025-05-24 17:51:07,386 - __main__ - ERROR - Error processing GENUSPOWER: Failed to fetch GENUSPOWER from yfinance: No data received from yfinance
+2025-05-24 17:51:07,427 - yfinance - ERROR - CLEAN.NS: Period '1h' is invalid, must be of the format 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, ytd, max, etc.
+2025-05-24 17:51:07,427 - __main__ - ERROR - Failed to fetch CLEAN from yfinance: No data received from yfinance
+2025-05-24 17:51:07,427 - __main__ - ERROR - Error processing CLEAN: Failed to fetch CLEAN from yfinance: No data received from yfinance
+2025-05-24 17:51:07,441 - __main__ - ERROR - Error fetching history for INFY: column "open" does not exist
+LINE 2:             SELECT date, open, high, low, close, volume 
+                                 ^
+
+2025-05-24 17:51:07,470 - yfinance - ERROR - HARSHA.NS: Period '1h' is invalid, must be of the format 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, ytd, max, etc.
+2025-05-24 17:51:07,471 - __main__ - ERROR - Failed to fetch HARSHA from yfinance: No data received from yfinance
+2025-05-24 17:51:07,471 - __main__ - ERROR - Error processing HARSHA: Failed to fetch HARSHA from yfinance: No data received from yfinance
+2025-05-24 17:51:07,629 - __main__ - ERROR - Error fetching history for RELIANCE: column "open" does not exist
+LINE 2:             SELECT date, open, high, low, close, volume 
+                                 ^
+
+2025-05-24 17:51:07,652 - yfinance - ERROR - INFY.NS: Period '1h' is invalid, must be of the format 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max, etc.
+2025-05-24 17:51:07,652 - __main__ - ERROR - Failed to fetch INFY from yfinance: No data received from yfinance
+2025-05-24 17:51:07,653 - __main__ - ERROR - Error processing INFY: Failed to fetch INFY from yfinance: No data received from yfinance
+2025-05-24 17:51:07,846 - __main__ - ERROR - Error fetching history for SBIN: column "open" does not exist
+LINE 2:             SELECT date, open, high, low, close, volume 
+                                 ^
+
+2025-05-24 17:51:07,854 - yfinance - ERROR - RELIANCE.NS: Period '1h' is invalid, must be of the format 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max, etc.
+2025-05-24 17:51:07,855 - __main__ - ERROR - Failed to fetch RELIANCE from yfinance: No data received from yfinance
+2025-05-24 17:51:07,856 - __main__ - ERROR - Error processing RELIANCE: Failed to fetch RELIANCE from yfinance: No data received from yfinance
+2025-05-24 17:51:08,082 - yfinance - ERROR - SBIN.NS: Period '1h' is invalid, must be of the format 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max, etc.
+2025-05-24 17:51:08,082 - __main__ - ERROR - Failed to fetch SBIN from yfinance: No data received from yfinance
+2025-05-24 17:51:08,082 - __main__ - ERROR - Error processing SBIN: Failed to fetch SBIN from yfinance: No data received from yfinance
+2025-05-24 17:55:50,523 - __main__ - INFO - Successfully connected to database (attempt 1)
+2025-05-24 17:55:50,524 - __main__ - INFO - StockDatabase initialized
+2025-05-24 17:55:50,634 - __main__ - INFO - StockDashboard initialized
+2025-05-24 17:55:51,316 - __main__ - INFO - Fetched 6 stocks in 0.18s
+2025-05-24 17:55:51,497 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:55:51,673 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:55:51,847 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:55:52,024 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:55:52,196 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:55:52,369 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:55:53,699 - __main__ - INFO - Fetched 6 stocks in 0.17s
+2025-05-24 17:55:53,901 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:55:54,110 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:55:54,328 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:55:54,528 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:55:54,704 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:55:54,893 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:55:59,699 - __main__ - INFO - Fetched 6 stocks in 0.18s
+2025-05-24 17:55:59,895 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:00,070 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:00,247 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:00,461 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:00,646 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:00,823 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:02,700 - __main__ - INFO - Fetched 6 stocks in 0.18s
+2025-05-24 17:56:02,893 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:03,067 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:03,245 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:03,429 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:03,604 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:03,779 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:08,704 - __main__ - INFO - Fetched 6 stocks in 0.18s
+2025-05-24 17:56:08,934 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:09,111 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:09,285 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:09,460 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:09,636 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:09,813 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:11,705 - __main__ - INFO - Fetched 6 stocks in 0.18s
+2025-05-24 17:56:11,901 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:12,074 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:12,249 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:12,427 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:12,601 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:12,778 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:17,695 - __main__ - INFO - Fetched 6 stocks in 0.17s
+2025-05-24 17:56:17,903 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:18,079 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:18,253 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:18,427 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:18,601 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:18,774 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:23,700 - __main__ - INFO - Fetched 6 stocks in 0.18s
+2025-05-24 17:56:23,879 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:24,057 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:24,231 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:24,413 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:24,607 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:24,804 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:26,695 - __main__ - INFO - Fetched 6 stocks in 0.17s
+2025-05-24 17:56:26,892 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:27,067 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:27,247 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:27,421 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:27,600 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:27,811 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:29,696 - __main__ - INFO - Fetched 6 stocks in 0.17s
+2025-05-24 17:56:29,902 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:30,076 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:30,252 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:30,430 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:30,605 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:30,780 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:32,697 - __main__ - INFO - Fetched 6 stocks in 0.17s
+2025-05-24 17:56:32,890 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:33,080 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:33,254 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:33,431 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:33,608 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:33,790 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:35,696 - __main__ - INFO - Fetched 6 stocks in 0.17s
+2025-05-24 17:56:35,898 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:36,104 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:36,303 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:36,495 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:36,709 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:36,906 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:38,711 - __main__ - INFO - Fetched 6 stocks in 0.19s
+2025-05-24 17:56:38,905 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:39,079 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:39,255 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:39,429 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:39,605 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:39,779 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:41,696 - __main__ - INFO - Fetched 6 stocks in 0.17s
+2025-05-24 17:56:41,890 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:42,065 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:42,241 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:42,416 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:42,591 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:42,766 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:44,699 - __main__ - INFO - Fetched 6 stocks in 0.18s
+2025-05-24 17:56:44,894 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:45,067 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:45,242 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:45,416 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:45,592 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:45,814 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:47,696 - __main__ - INFO - Fetched 6 stocks in 0.17s
+2025-05-24 17:56:47,920 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:48,094 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:48,268 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:48,449 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:48,623 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:48,797 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:50,701 - __main__ - INFO - Fetched 6 stocks in 0.18s
+2025-05-24 17:56:50,894 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:51,068 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:51,257 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:51,433 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:51,609 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:51,782 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:53,696 - __main__ - INFO - Fetched 6 stocks in 0.17s
+2025-05-24 17:56:53,904 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:54,080 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:54,254 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:54,429 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:54,603 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:54,777 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:56,702 - __main__ - INFO - Fetched 6 stocks in 0.18s
+2025-05-24 17:56:56,896 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:57,071 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:57,245 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:57,421 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:57,598 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:56:57,773 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:02,707 - __main__ - INFO - Fetched 6 stocks in 0.19s
+2025-05-24 17:57:02,901 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:03,077 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:03,252 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:03,428 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:03,613 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:03,787 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:05,705 - __main__ - INFO - Fetched 6 stocks in 0.18s
+2025-05-24 17:57:05,905 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:06,082 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:06,256 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:06,491 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:06,665 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:06,844 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:11,712 - __main__ - INFO - Fetched 6 stocks in 0.19s
+2025-05-24 17:57:11,911 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:12,086 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:12,261 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:12,437 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:12,612 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:12,785 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:14,696 - __main__ - INFO - Fetched 6 stocks in 0.17s
+2025-05-24 17:57:14,891 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:15,089 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:15,262 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:15,458 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:15,645 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:15,827 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:20,757 - __main__ - INFO - Fetched 6 stocks in 0.23s
+2025-05-24 17:57:20,955 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:21,144 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:21,321 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:21,496 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:21,670 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:21,845 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:23,696 - __main__ - INFO - Fetched 6 stocks in 0.17s
+2025-05-24 17:57:23,895 - __main__ - ERROR - Error fetching history for CLEAN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:24,069 - __main__ - ERROR - Error fetching history for GENUSPOWER: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:24,246 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:24,422 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:24,598 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:24,773 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:26,696 - __main__ - INFO - Fetched 1 stocks in 0.17s
+2025-05-24 17:57:26,804 - __main__ - ERROR - Error sorting table: '<' not supported between instances of 'str' and 'float'
+2025-05-24 17:57:26,878 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:29,696 - __main__ - INFO - Fetched 1 stocks in 0.17s
+2025-05-24 17:57:29,804 - __main__ - ERROR - Error sorting table: '<' not supported between instances of 'str' and 'float'
+2025-05-24 17:57:29,894 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:57:35,699 - __main__ - INFO - Fetched 0 stocks in 0.18s
+2025-05-24 17:57:38,714 - __main__ - INFO - Fetched 0 stocks in 0.19s
+2025-05-24 17:57:41,040 - __main__ - INFO - Database connection closed
+2025-05-24 17:57:45,181 - __main__ - INFO - Successfully connected to database (attempt 1)
+2025-05-24 17:57:45,182 - __main__ - INFO - StockDatabase initialized
+2025-05-24 17:57:45,282 - __main__ - INFO - StockDashboard initialized
+2025-05-24 17:57:45,919 - __main__ - INFO - Fetched 0 stocks in 0.16s
+2025-05-24 17:57:48,600 - __main__ - INFO - Fetched 0 stocks in 0.17s
+2025-05-24 17:57:51,685 - __main__ - INFO - Fetched 0 stocks in 0.16s
+2025-05-24 17:57:54,704 - __main__ - INFO - Fetched 0 stocks in 0.18s
+2025-05-24 17:57:57,682 - __main__ - INFO - Fetched 0 stocks in 0.16s
+2025-05-24 17:58:00,685 - __main__ - INFO - Fetched 0 stocks in 0.16s
+2025-05-24 17:58:03,723 - __main__ - INFO - Fetched 0 stocks in 0.20s
+2025-05-24 17:58:09,690 - __main__ - INFO - Fetched 0 stocks in 0.17s
+2025-05-24 17:58:12,731 - __main__ - INFO - Fetched 0 stocks in 0.21s
+2025-05-24 17:58:15,685 - __main__ - INFO - Fetched 0 stocks in 0.16s
+2025-05-24 17:58:18,684 - __main__ - INFO - Fetched 0 stocks in 0.16s
+2025-05-24 17:58:21,685 - __main__ - INFO - Fetched 1 stocks in 0.16s
+2025-05-24 17:58:21,884 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:58:27,755 - __main__ - INFO - Fetched 1 stocks in 0.23s
+2025-05-24 17:58:28,025 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:58:30,685 - __main__ - INFO - Fetched 1 stocks in 0.16s
+2025-05-24 17:58:30,848 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:58:33,932 - __main__ - INFO - Fetched 1 stocks in 0.41s
+2025-05-24 17:58:34,116 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:58:36,686 - __main__ - INFO - Fetched 1 stocks in 0.16s
+2025-05-24 17:58:36,861 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:58:42,691 - __main__ - INFO - Fetched 1 stocks in 0.17s
+2025-05-24 17:58:42,875 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:58:45,684 - __main__ - INFO - Fetched 1 stocks in 0.16s
+2025-05-24 17:58:45,850 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:58:48,707 - __main__ - INFO - Fetched 1 stocks in 0.19s
+2025-05-24 17:58:48,873 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:58:51,686 - __main__ - INFO - Fetched 2 stocks in 0.16s
+2025-05-24 17:58:52,029 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:58:52,244 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:58:57,694 - __main__ - INFO - Fetched 2 stocks in 0.17s
+2025-05-24 17:58:57,866 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:58:58,042 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:03,684 - __main__ - INFO - Fetched 2 stocks in 0.16s
+2025-05-24 17:59:03,854 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:04,031 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:06,684 - __main__ - INFO - Fetched 2 stocks in 0.16s
+2025-05-24 17:59:06,854 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:07,017 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:09,939 - __main__ - INFO - Fetched 2 stocks in 0.42s
+2025-05-24 17:59:10,288 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:10,458 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:12,684 - __main__ - INFO - Fetched 2 stocks in 0.16s
+2025-05-24 17:59:12,855 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:13,016 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:18,684 - __main__ - INFO - Fetched 2 stocks in 0.16s
+2025-05-24 17:59:18,849 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:19,010 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:21,685 - __main__ - INFO - Fetched 3 stocks in 0.16s
+2025-05-24 17:59:21,861 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:22,021 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:22,181 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:24,686 - __main__ - INFO - Fetched 3 stocks in 0.16s
+2025-05-24 17:59:24,858 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:25,039 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:25,209 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:27,685 - __main__ - INFO - Fetched 3 stocks in 0.16s
+2025-05-24 17:59:27,860 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:28,043 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:28,237 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:30,686 - __main__ - INFO - Fetched 3 stocks in 0.16s
+2025-05-24 17:59:30,857 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:31,020 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:31,223 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:33,944 - __main__ - INFO - Fetched 3 stocks in 0.42s
+2025-05-24 17:59:34,136 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:34,302 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:34,469 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:36,686 - __main__ - INFO - Fetched 3 stocks in 0.16s
+2025-05-24 17:59:36,858 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:37,022 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:37,184 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:39,687 - __main__ - INFO - Fetched 3 stocks in 0.16s
+2025-05-24 17:59:39,857 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:40,021 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:40,202 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:42,693 - __main__ - INFO - Fetched 3 stocks in 0.17s
+2025-05-24 17:59:42,864 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:43,031 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:43,199 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:45,694 - __main__ - INFO - Fetched 3 stocks in 0.17s
+2025-05-24 17:59:45,889 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:46,050 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:46,212 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:48,685 - __main__ - INFO - Fetched 3 stocks in 0.16s
+2025-05-24 17:59:48,871 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:49,053 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:49,213 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 17:59:51,460 - __main__ - INFO - Database connection closed
+2025-05-24 19:03:48,536 - __main__ - INFO - Successfully connected to database (attempt 1)
+2025-05-24 19:03:48,538 - __main__ - INFO - StockDatabase initialized
+2025-05-24 19:03:48,663 - __main__ - INFO - StockDashboard initialized
+2025-05-24 19:03:49,348 - __main__ - INFO - Fetched 4 stocks in 0.17s
+2025-05-24 19:03:49,521 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:03:49,687 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:03:49,856 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:03:50,024 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:03:51,736 - __main__ - INFO - Fetched 4 stocks in 0.17s
+2025-05-24 19:03:51,913 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:03:52,084 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:03:52,261 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:03:52,426 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:03:57,738 - __main__ - INFO - Fetched 4 stocks in 0.17s
+2025-05-24 19:03:57,912 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:03:58,080 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:03:58,247 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:03:58,413 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:00,732 - __main__ - INFO - Fetched 4 stocks in 0.17s
+2025-05-24 19:04:00,915 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:01,085 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:01,259 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:01,449 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:03,730 - __main__ - INFO - Fetched 4 stocks in 0.16s
+2025-05-24 19:04:03,910 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:04,080 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:04,299 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:04,496 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:06,733 - __main__ - INFO - Fetched 4 stocks in 0.17s
+2025-05-24 19:04:06,913 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:07,082 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:07,248 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:07,417 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:12,740 - __main__ - INFO - Fetched 4 stocks in 0.17s
+2025-05-24 19:04:12,911 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:13,078 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:13,246 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:13,411 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:18,730 - __main__ - INFO - Fetched 4 stocks in 0.17s
+2025-05-24 19:04:18,908 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:19,079 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:19,244 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:19,409 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:21,731 - __main__ - INFO - Fetched 4 stocks in 0.17s
+2025-05-24 19:04:21,913 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:22,083 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:22,254 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:22,429 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:24,730 - __main__ - INFO - Fetched 4 stocks in 0.17s
+2025-05-24 19:04:24,911 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:25,090 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:25,273 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:25,440 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:30,736 - __main__ - INFO - Fetched 4 stocks in 0.17s
+2025-05-24 19:04:30,913 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:31,084 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:31,270 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:31,436 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:04:33,469 - __main__ - INFO - Database connection closed
+2025-05-24 19:06:03,086 - __main__ - INFO - Successfully connected to database (attempt 1)
+2025-05-24 19:06:03,087 - __main__ - INFO - StockDatabase initialized
+2025-05-24 19:06:03,202 - __main__ - INFO - StockDashboard initialized
+2025-05-24 19:06:04,057 - __main__ - INFO - Fetched 4 stocks in 0.38s
+2025-05-24 19:06:04,293 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:04,515 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:04,849 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:05,087 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:06,249 - __main__ - INFO - Fetched 4 stocks in 0.18s
+2025-05-24 19:06:06,443 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:06,628 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:06,996 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:07,192 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:09,245 - __main__ - INFO - Fetched 4 stocks in 0.18s
+2025-05-24 19:06:09,438 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:09,619 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:09,799 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:09,980 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:12,247 - __main__ - INFO - Fetched 4 stocks in 0.18s
+2025-05-24 19:06:12,447 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:12,643 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:12,836 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:13,016 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:18,293 - __main__ - INFO - Fetched 4 stocks in 0.23s
+2025-05-24 19:06:18,490 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:18,694 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:18,926 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:19,126 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:21,249 - __main__ - INFO - Fetched 4 stocks in 0.18s
+2025-05-24 19:06:21,442 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:21,624 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:21,812 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:21,992 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:24,447 - __main__ - INFO - Fetched 4 stocks in 0.18s
+2025-05-24 19:06:24,655 - __main__ - ERROR - Error fetching history for HARSHA: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:24,845 - __main__ - ERROR - Error fetching history for INFY: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:25,027 - __main__ - ERROR - Error fetching history for RELIANCE: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:25,208 - __main__ - ERROR - Error fetching history for SBIN: column "timestamp" does not exist
+LINE 2:             SELECT timestamp as date, open_price as open, hi...
+                           ^
+
+2025-05-24 19:06:25,354 - __main__ - INFO - Database connection closed
+2025-05-24 19:06:25,377 - __main__ - ERROR - Error processing SBIN: wrapped C/C++ object of type WorkerSignals has been deleted
+Traceback (most recent call last):
+  File "/Users/amnasahamed/Documents/Personal/trading/yfinance v2/stock_analyzer.py", line 426, in run
+    self.signals.progress.emit(30)
+    ^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: wrapped C/C++ object of type WorkerSignals has been deleted

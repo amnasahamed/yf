@@ -1,0 +1,447 @@
+import sys
+import os
+import json
+import requests
+from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
+                             QPushButton, QComboBox, QTableWidget, QTableWidgetItem,
+                             QCheckBox, QTextEdit, QProgressBar, QMessageBox)
+from PyQt5.QtCore import QTimer, Qt
+import yfinance as yf
+import pandas as pd
+from ta.momentum import RSIIndicator
+from ta.trend import MACD
+from pync import Notifier
+import threading
+from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Validate required environment variables
+required_vars = ['NOCODB_URL', 'NOCODB_TOKEN']
+missing_vars = [var for var in required_vars if not os.getenv(var)]
+
+if missing_vars:
+    error_msg = f"Error: Missing required environment variables: {', '.join(missing_vars)}\n"
+    error_msg += "Please ensure your .env file contains these variables:"
+    error_msg += "\nNOCODB_URL=your_nocodb_url\nNOCODB_TOKEN=your_nocodb_token"
+    print(error_msg)
+    sys.exit(1)
+
+class NocoDBClient:
+    def __init__(self):
+        try:
+            self.base_url = os.getenv('NOCODB_URL').rstrip('/')
+            self.token = os.getenv('NOCODB_TOKEN')
+            
+            if not self.base_url or not self.token:
+                raise ValueError("NocoDB URL or Token is empty")
+                
+            self.headers = {
+                'xc-token': self.token,
+                'Content-Type': 'application/json'
+            }
+            print(f"Successfully connected to NocoDB at: {self.base_url}")
+            
+        except Exception as e:
+            error_msg = f"Failed to initialize NocoDB client: {str(e)}\n"
+            error_msg += f"NOCODB_URL: {'Set' if os.getenv('NOCODB_URL') else 'Not set'}\n"
+            error_msg += f"NOCODB_TOKEN: {'Set' if os.getenv('NOCODB_TOKEN') else 'Not set'}"
+            print(error_msg)
+            raise
+    
+    def get_stocks(self, table_name='stocks'):
+        """Fetch all stocks from NocoDB"""
+        try:
+            url = f"{self.base_url}/api/v2/tables/{table_name}/records"
+            response = requests.get(url, headers=self.headers)
+            response.raise_for_status()
+            return response.json().get('list', [])
+        except Exception as e:
+            print(f"Error fetching stocks: {e}")
+            return []
+
+    def list_all_tables(self):
+        """List all available tables in the NocoDB instance"""
+        try:
+            # Try to get list of projects first
+            projects_url = f"{self.base_url}/api/v1/db/meta/projects/"
+            projects_response = requests.get(projects_url, headers=self.headers)
+            projects_response.raise_for_status()
+            projects = projects_response.json()
+            
+            if not projects:
+                print("No projects found in NocoDB")
+                return []
+                
+            # For each project, list tables
+            all_tables = []
+            for project in projects:
+                project_id = project['id']
+                tables_url = f"{self.base_url}/api/v1/db/meta/projects/{project_id}/tables"
+                tables_response = requests.get(tables_url, headers=self.headers)
+                tables_response.raise_for_status()
+                tables = tables_response.json()
+                all_tables.extend(tables)
+                
+            print("\nAvailable tables in NocoDB:")
+            for table in all_tables:
+                print(f"- {table.get('title', 'Untitled')} (ID: table.get('id', 'N/A'))")
+                
+            return all_tables
+            
+        except Exception as e:
+            print(f"Error listing tables: {e}")
+            return []
+    
+    def get_active_stocks(self, table_name='n8n'):
+        """Fetch only active stocks from NocoDB"""
+        try:
+            print(f"\nTrying to fetch from table: {table_name}")
+            
+            # First try with active filter
+            url = f"{self.base_url}/api/v2/tables/{table_name}/records?where=(is_active,eq,true)"
+            print(f"Trying URL: {url}")
+            response = requests.get(url, headers=self.headers)
+            
+            # If no active filter works, try without filter
+            if response.status_code == 404:
+                url = f"{self.base_url}/api/v2/tables/{table_name}/records"
+                print(f"Trying without active filter: {url}")
+                response = requests.get(url, headers=self.headers)
+                
+            response.raise_for_status()
+            data = response.json()
+            
+            # Handle different response formats
+            if 'list' in data:
+                return data['list']  # v2 API format
+            elif isinstance(data, list):
+                return data  # Direct list response
+            else:
+                print(f"Unexpected response format: {data}")
+                return []
+                
+        except Exception as e:
+            print(f"Error fetching stocks from {table_name}: {e}")
+            print(f"URL: {url}")
+            print(f"Status Code: {getattr(response, 'status_code', 'No response')}")
+            print(f"Response: {getattr(response, 'text', 'No response')}")
+            return []
+
+class StockDashboard(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("📈 Stock RSI & MACD Dashboard (NocoDB Sync)")
+        self.setGeometry(100, 100, 1000, 800)
+        self.symbols = []
+        self.nocodb = NocoDBClient()
+        self.last_sync = None
+
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+
+        # Status bar
+        self.status_bar = QHBoxLayout()
+        self.sync_status = QLabel("Last sync: Never")
+        self.sync_status.setStyleSheet("color: #666; font-style: italic;")
+        self.status_bar.addWidget(self.sync_status)
+        self.status_bar.addStretch()
+        
+        # Sync button
+        self.sync_button = QPushButton("🔄 Sync with NocoDB")
+        self.sync_button.clicked.connect(self.sync_with_nocodb)
+        self.status_bar.addWidget(self.sync_button)
+        
+        self.layout.addLayout(self.status_bar)
+        
+        # Table setup
+        self.table = QTableWidget()
+        self.table.setColumnCount(6)
+        self.table.setHorizontalHeaderLabels(["Symbol", "Name", "Exchange", "Interval", "RSI", "MACD"])
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.setSortingEnabled(True)
+        self.layout.addWidget(self.table)
+
+        self.table = QTableWidget()
+        self.table.setColumnCount(3)
+        self.table.setHorizontalHeaderLabels(["Symbol", "RSI", "MACD"])
+        self.layout.addWidget(self.table)
+
+        # Controls
+        controls_layout = QHBoxLayout()
+        
+        # Interval selection
+        controls_layout.addWidget(QLabel("Update Interval:"))
+        self.interval_dropdown = QComboBox()
+        self.interval_dropdown.addItems(["1m", "5m", "15m", "30m", "1h", "4h"])
+        controls_layout.addWidget(self.interval_dropdown)
+        
+        # Auto-refresh toggle
+        self.auto_refresh_chk = QCheckBox("Auto Refresh (1 min)")
+        self.auto_refresh_chk.setChecked(True)
+        controls_layout.addWidget(self.auto_refresh_chk)
+        
+        # Manual refresh button
+        self.refresh_btn = QPushButton("🔄 Refresh Data")
+        self.refresh_btn.clicked.connect(self.refresh_data)
+        controls_layout.addWidget(self.refresh_btn)
+        
+        controls_layout.addStretch()
+        self.layout.addLayout(controls_layout)
+        
+        # Progress bar
+        self.loader = QProgressBar()
+        self.loader.setRange(0, 0)
+        self.loader.hide()
+        self.layout.addWidget(self.loader)
+        
+        # Error log
+        self.error_log = QTextEdit()
+        self.error_log.setReadOnly(True)
+        self.error_log.setMaximumHeight(100)
+        self.error_log.setStyleSheet("background: #f8f9fa; color: #dc3545; font-family: monospace;")
+        self.layout.addWidget(self.error_log)
+        
+        # Set up timers
+        self.refresh_timer = QTimer()
+        self.refresh_timer.timeout.connect(self.refresh_data)
+        self.refresh_timer.start(60000)  # 1 minute
+        
+        # Initial sync
+        self.sync_with_nocodb()
+
+    def sync_with_nocodb(self):
+        """Synchronize stock list with NocoDB"""
+        try:
+            self.loader.show()
+            self.error_log.clear()
+            
+            # Try to fetch stocks from NocoDB
+            stocks = self.nocodb.get_active_stocks()
+            
+            # If no stocks found, try to list all tables for debugging
+            if not stocks:
+                self.error_log.append("No stocks found in default table. Listing all available tables...")
+                tables = self.nocodb.list_all_tables()
+                if not tables:
+                    self.error_log.append("No tables found in NocoDB. Please check your connection and permissions.")
+                return
+                
+            # Clear existing symbols
+            self.symbols = []
+            
+            # Process each stock
+            for stock in stocks:
+                try:
+                    # Get stock data with case-insensitive field access
+                    stock_data = {k.lower(): v for k, v in stock.items()}
+                    
+                    symbol = stock_data.get('symbol', '').strip().upper()
+                    name = stock_data.get('name', symbol).strip()
+                    exchange = stock_data.get('exchange', 'NSE').strip().upper()
+                    interval = stock_data.get('interval', '15m').strip().lower()
+                    is_active = str(stock_data.get('is_active', 'true')).lower() == 'true'
+                    
+                    if not symbol or not is_active:
+                        continue
+                        
+                    # Validate interval
+                    valid_intervals = ['1m', '5m', '15m', '30m', '1h', '4h']
+                    if interval not in valid_intervals:
+                        interval = '15m'  # Default to 15m if invalid
+                    
+                    # Convert exchange to yfinance format
+                    if exchange == 'NSE':
+                        full_symbol = f"{symbol}.NS"
+                    elif exchange == 'BSE':
+                        full_symbol = f"{symbol}.BO"
+                    else:
+                        full_symbol = f"{symbol}.NS"  # Default to NSE
+                    
+                    self.symbols.append({
+                        'symbol': full_symbol,
+                        'name': name,
+                        'exchange': exchange,
+                        'interval': interval,
+                        'original_data': stock_data  # Keep original data for reference
+                    })
+                    
+                    print(f"Added stock: {name} ({symbol}.{exchange}) - Interval: {interval}")
+                    
+                except Exception as e:
+                    error_msg = f"Error processing stock {stock.get('Name', 'Unknown')}: {str(e)}"
+                    print(error_msg)
+                    self.error_log.append(error_msg)
+            
+            if not self.symbols:
+                self.error_log.append("No active stocks found")
+                return
+                
+            self.last_sync = datetime.now()
+            self.sync_status.setText(f"Last sync: {self.last_sync.strftime('%Y-%m-%d %H:%M:%S')} | {len(self.symbols)} stocks")
+            self.refresh_data()
+            
+        except Exception as e:
+            error_msg = f"Failed to sync with NocoDB: {str(e)}"
+            print(error_msg)
+            self.error_log.append(error_msg)
+        finally:
+            self.loader.hide()
+
+    def refresh_data(self):
+        """Start a background thread to refresh stock data"""
+        if not self.symbols:
+            return
+            
+        self.loader.show()
+        self.refresh_btn.setEnabled(False)
+        threading.Thread(target=self._refresh_data, daemon=True).start()
+
+    def _refresh_data(self):
+        """Fetch and update stock data"""
+        if not self.symbols:
+            self.loader.hide()
+            self.refresh_btn.setEnabled(True)
+            return
+            
+        try:
+            # Clear previous errors
+            self.error_log.clear()
+            
+            # Update table rows
+            self.table.setRowCount(len(self.symbols))
+            
+            for idx, stock in enumerate(self.symbols):
+                try:
+                    symbol = stock['symbol']
+                    name = stock['name']
+                    interval = stock.get('interval', '15m')
+                    
+                    # Download stock data with timeout
+                    try:
+                        df = yf.download(
+                            symbol, 
+                            period="1d", 
+                            interval=interval, 
+                            progress=False,
+                            timeout=10  # 10 seconds timeout
+                        )
+                    except Exception as e:
+                        raise Exception(f"Failed to download data: {str(e)}")
+                    
+                    if df.empty:
+                        raise ValueError("No data received from Yahoo Finance")
+                        
+                    close = df['Close'].dropna()
+                    if close.empty:
+                        raise ValueError("No price data available in the response")
+                    if len(close) < 14:  # Minimum data points for RSI
+                        raise ValueError(f"Not enough data points ({len(close)}) for indicators")
+                    
+                    # Calculate indicators with error handling
+                    try:
+                        rsi_val = RSIIndicator(close).rsi().iloc[-1]
+                        macd_val = MACD(close).macd_diff().iloc[-1]
+                        
+                        # Ensure we have valid numeric values
+                        if pd.isna(rsi_val) or pd.isna(macd_val):
+                            raise ValueError("Invalid indicator values received")
+                            
+                        # Send desktop notifications for RSI thresholds
+                        if rsi_val > 70:
+                            Notifier.notify(
+                                f"{name} ({stock['exchange']}): RSI > 70 ({rsi_val:.2f})", 
+                                title="📈 RSI Overbought"
+                            )
+                        elif rsi_val < 30:
+                            Notifier.notify(
+                                f"{name} ({stock['exchange']}): RSI < 30 ({rsi_val:.2f})", 
+                                title="📉 RSI Oversold"
+                            )
+                            
+                        # Update table with successful data
+                        self._update_table_row(
+                            idx,
+                            name=name,
+                            symbol=symbol.replace('.NS', '').replace('.BO', ''),
+                            exchange=stock['exchange'],
+                            interval=interval,
+                            rsi=f"{rsi_val:.2f}",
+                            macd=f"{macd_val:.6f}",
+                            rsi_color="#e74c3c" if rsi_val > 70 else ("#2ecc71" if rsi_val < 30 else "#000000"),
+                            macd_color="#e74c3c" if macd_val > 0 else "#2ecc71"
+                        )
+                        
+                    except Exception as e:
+                        raise Exception(f"Indicator calculation failed: {str(e)}")
+                    
+                except Exception as e:
+                    error_msg = f"{name} ({stock.get('exchange', 'N/A')}): {str(e)}"
+                    print(f"Error: {error_msg}")
+                    
+                    # Update table with error
+                    self._update_table_row(
+                        idx,
+                        name=stock.get('name', 'N/A'),
+                        symbol=stock['symbol'].replace('.NS', '').replace('.BO', ''),
+                        exchange=stock.get('exchange', 'N/A'),
+                        interval=stock.get('interval', 'N/A'),
+                        rsi="Error",
+                        macd="Error",
+                        error=error_msg
+                    )
+                    
+                    # Add to error log
+                    self.error_log.append(f"[{datetime.now().strftime('%H:%M:%S')}] {error_msg}")
+                    
+        except Exception as e:
+            error_msg = f"Refresh error: {str(e)}"
+            print(error_msg)
+            self.error_log.append(error_msg)
+            
+        finally:
+            # Update UI on the main thread
+            self.loader.hide()
+            self.refresh_btn.setEnabled(True)
+    
+    def _update_table_row(self, row, **kwargs):
+        """Helper to update a table row with stock data"""
+        def update():
+            try:
+                # Set symbol and name
+                self.table.setItem(row, 0, QTableWidgetItem(kwargs.get('symbol', '')))
+                self.table.setItem(row, 1, QTableWidgetItem(kwargs.get('name', '')))
+                self.table.setItem(row, 2, QTableWidgetItem(kwargs.get('exchange', '')))
+                self.table.setItem(row, 3, QTableWidgetItem(kwargs.get('interval', '')))
+                
+                # Set RSI with color
+                rsi_item = QTableWidgetItem(kwargs.get('rsi', 'N/A'))
+                if 'rsi_color' in kwargs:
+                    rsi_item.setForeground(QtGui.QColor(kwargs['rsi_color']))
+                self.table.setItem(row, 4, rsi_item)
+                
+                # Set MACD with color
+                macd_item = QTableWidgetItem(kwargs.get('macd', 'N/A'))
+                if 'macd_color' in kwargs:
+                    macd_item.setForeground(QtGui.QColor(kwargs['macd_color']))
+                self.table.setItem(row, 5, macd_item)
+                
+                # Log any errors
+                if 'error' in kwargs:
+                    self.error_log.append(
+                        f"[{datetime.now().strftime('%H:%M:%S')}] {kwargs.get('name', 'Stock')}: {kwargs['error']}"
+                    )
+                    
+            except Exception as e:
+                print(f"Error updating table row: {e}")
+        
+        # Schedule the update on the main thread
+        QApplication.instance().postEvent(self, lambda: update())
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = StockDashboard()
+    window.show()
+    sys.exit(app.exec_())
